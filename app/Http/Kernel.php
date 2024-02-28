@@ -2,6 +2,8 @@
 
 namespace App\Http;
 
+use App\Jobs\PayApplicationsProcess;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -67,4 +69,10 @@ class Kernel extends HttpKernel
         'RedirectIfIsAdmin' => \App\Http\Middleware\RedirectIfIsAdmin::class,
         'IsAdmin' => \App\Http\Middleware\IsAdmin::class
     ];
+
+    protected function schedule(Schedule $schedule)
+    {
+        // Run the PayApplicationsProcess job daily at 00:00
+        $schedule->job(new PayApplicationsProcess())->daily();
+    }
 }

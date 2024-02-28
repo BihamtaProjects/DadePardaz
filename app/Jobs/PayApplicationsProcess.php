@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Http\Controllers\PaymentController;
 use App\Models\Application;
 use App\Models\User;
 use Carbon\Carbon;
@@ -28,18 +29,18 @@ class PayApplicationsProcess implements ShouldQueue
      */
     public function handle(): void
     {
-        $sevenDaysAgo = Carbon::now()->subDays(7);
+        $oneDayAgo = Carbon::now()->subDays(1);
 
-        $applications = Application::where('created_at', '>=', $sevenDaysAgo)
+        $applications = Application::where('created_at', '>=', $oneDayAgo)
             ->andWhere('status', 1)
-            ->get();
+            ->pluck('id');
 
-        foreach ($applications as $application){
-            $user = User::where('id',$application->user_id)->first();
-
-            // pay user the application price
+        $applications = Application::whereIn('id', $applications)->with('user')->get();
+        $paymentController = new PaymentController();
+        foreach ($applications as $application) {
+             $paymentController->payToEachUser($application);
         }
 
+        }
 
-    }
 }
