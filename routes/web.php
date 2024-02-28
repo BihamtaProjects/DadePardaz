@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ApplicationFormController;
 use App\Http\Controllers\ApplicationsController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -22,12 +23,6 @@ Route::get('/', function () {
 
 Route::get('/dashboard', [ApplicationsController::class,'userDashboard'])->middleware(['auth', 'verified', 'RedirectIfIsAdmin'])->name('dashboard');
 
-//Route::get('/admin/dashboard', function () {
-//    return view('admin.index');
-//})->middleware(['auth', 'verified','IsAdmin'])->name('admin.dashboard');
-
-
-
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -38,6 +33,9 @@ require __DIR__.'/auth.php';
 
 Route::prefix('/admin-panel')->middleware(['auth','IsAdmin'])->name('admin.')->group(function(){
     Route::resource('applications', ApplicationsController::class);
+    Route::post('/payToUsers', [PaymentController::class, 'payToMultipleUsers'])->name('payToUsers');
+
+
 });
 
 Route::prefix('/user-panel')->name('form.')->group(function(){
@@ -45,3 +43,5 @@ Route::prefix('/user-panel')->name('form.')->group(function(){
     Route::post('/application/form/send', [ApplicationFormController::class, 'sendForm'])->name('user.sendForm');
 });
 
+//Route::post('/payment', [PaymentController::class, 'payment'])->name('payment');
+//Route::post('/payment-verify', [PaymentController::class, 'paymentVerify'])->name('paymentVerify');

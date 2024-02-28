@@ -24,6 +24,11 @@ class Application extends Model
         return $this->hasmany(File::class);
     }
 
+    public function payment()
+    {
+        return $this->hasOne(Payment::class);
+    }
+
     public function getStatusAttribute($status)
     {
         if($status==1){
